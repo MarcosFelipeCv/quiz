@@ -102,3 +102,31 @@ def test_filter_correct_choices():
     q.add_choice("b", False)
     correct_ids = q._correct_choice_ids() 
     assert correct_ids == [1]
+
+
+@pytest.fixture
+def basic_question():
+    return Question(title="q1, 2+2?")
+
+
+def test_add_choice_to_basic_question(basic_question):
+    basic_question.add_choice("4", True)
+    assert len(basic_question.choices) == 1
+    assert basic_question.choices[0].text == "4"
+    
+
+@pytest.fixture
+def question_with_choices():
+    q = Question(title="2+2?", max_selections=2)
+    q.add_choice("4", True)
+    q.add_choice("2", False)
+    q.add_choice("5", False)
+    return q
+
+def test_correct_choice_ids(question_with_choices):
+    correct_ids = question_with_choices._correct_choice_ids()
+    assert correct_ids == [1]
+    
+def test_select_valid_choices(question_with_choices):
+    selected_ids = question_with_choices.select_choices([1, 2])
+    assert selected_ids == [1]
